@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. See [standa
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/arobson/rabbot/compare/v1.1.0...v2.1.0) (2018-02-18)
 
+## 2.0.3 [2018-01-04]
+### Removed
+* Unused dependency `request`
+* Unused dependency `mocha-lcov-reporter`
 
 ### Bug Fixes
 
