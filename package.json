@@ -1,5 +1,5 @@
 {
-  "name": "rabbot",
+  "name": "rabbot-hufsm",
   "version": "2.1.0",
   "description": "Abstractions to simplify working with the RabbitMQ",
   "main": "src/index.js",
