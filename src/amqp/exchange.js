@@ -87,7 +87,8 @@ function publish (channel, options, topology, log, serializers, message) {
     appId: message.appId || info.id,
     headers: message.headers || {},
     expiration: message.expiresAfter || undefined,
-    mandatory: message.mandatory || false
+    mandatory: message.mandatory || false,
+    userId: message.userId,
   };
   if (publishOptions.replyTo === DIRECT_REPLY_TO || DIRECT_REGEX.test(publishOptions.replyTo)) {
     publishOptions.headers[ 'direct-reply-to' ] = 'true';
