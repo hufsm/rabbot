@@ -66,7 +66,7 @@ function connectionFn() {
 
 describe( "Topology", function() {
 
-	describe( "when initializing with default reply queue", function() {
+	describe( "when initializing with a reply queue", function() {
 		var topology, conn, replyQueue, ex, q, controlMock;
 
 		before( function( done ) {
@@ -99,7 +99,12 @@ describe( "Topology", function() {
 				.once()
 				.resolves( control );
 
-			topology = topologyFn( conn.instance, {}, {}, undefined, undefined, Exchange, Queue, "test" );
+      const options = {
+        replyQueue: {
+          name: "testReplyQueue"
+        }
+      }
+			topology = topologyFn( conn.instance, options, {}, undefined, undefined, Exchange, Queue, "test" );
 			Promise.all( [
 					topology.createExchange( { name: "top-ex", type: "topic" } ),
 					topology.createQueue( { name: "top-q", unique: "hash" } )
@@ -119,11 +124,11 @@ describe( "Topology", function() {
 			} );
 		} );
 
-		it( "should create default reply queue", function() {
+		it( "should create a reply queue", function() {
       replyQueue.autoDelete.should.eql(true);
       replyQueue.subscribe.should.eql(true);
-      replyQueue.name.should.match(/test.response.queue-/);
-      replyQueue.uniqueName.should.match(/test.response.queue-/);
+      replyQueue.name.should.match(/testReplyQueue-/);
+      replyQueue.uniqueName.should.match(/testReplyQueue-/);
 		} );
 
 		it( "should bind queue", function() {
@@ -166,80 +171,12 @@ describe( "Topology", function() {
 			it( "should recreate default reply queue", function() {
         replyQueue.autoDelete.should.eql(true);
         replyQueue.subscribe.should.eql(true);
-        replyQueue.name.should.match(/test.response.queue-/);
-        replyQueue.uniqueName.should.match(/test.response.queue-/);
+        replyQueue.name.should.match(/testReplyQueue-/);
+        replyQueue.uniqueName.should.match(/testReplyQueue-/);
 			} );
 
 			it( "should bindQueue", function() {
 				controlMock.verify();
-			} );
-		} );
-	} );
-
-	describe( "when initializing with custom reply queue", function() {
-		var topology, conn, replyQueue, ex, q;
-
-		before( function( done ) {
-			ex = emitter();
-			q = emitter();
-			q.check = function() {
-				q.raise( "defined" );
-				return Promise.resolve();
-			};
-			var Exchange = function() {
-				return ex;
-			};
-			var Queue = function() {
-				return q;
-			};
-			conn = connectionFn();
-			var options = {
-				replyQueue: {
-					name: "mine",
-					uniqueName: "mine",
-					autoDelete: false,
-					subscribe: true
-				}
-			};
-			topology = topologyFn( conn.instance, options, {}, undefined, undefined, Exchange, Queue, "test" );
-			topology.once( "replyQueue.ready", function( queue ) {
-				replyQueue = queue;
-				done();
-			} );
-      setTimeout(() => {
-        q.raise('subscribed');
-      }, 100);
-			process.nextTick( function() {
-				q.raise( "defined" );
-			} );
-		} );
-
-		it( "should create custom reply queue", function() {
-      replyQueue.autoDelete.should.eql(false);
-      replyQueue.subscribe.should.eql(true);
-      replyQueue.name.should.match(/mine-/);
-      replyQueue.uniqueName.should.match(/mine-/);
-		} );
-
-		describe( "when recovering from disconnection", function() {
-			before( function( done ) {
-				replyQueue = undefined;
-        topology.once( "replyQueue.ready", function( queue ) {
-          replyQueue = queue;
-					done();
-				} );
-				conn.instance.raise( "reconnected" );
-			} );
-
-			it( "should recreate custom reply queue", function() {
-        replyQueue.should.contain(
-          {
-            autoDelete: false,
-            subscribe: true
-          }
-        );
-        replyQueue.name.should.match(/mine-/);
-        replyQueue.uniqueName.should.match(/mine-/);
 			} );
 		} );
 	} );
@@ -261,9 +198,7 @@ describe( "Topology", function() {
 				return q;
 			};
 			conn = connectionFn();
-			var options = {
-				replyQueue: false
-			};
+			var options = {};
 			topology = topologyFn( conn.instance, options, {}, undefined, undefined, Exchange, Queue );
 			topology.once( "replyQueue.ready", function( queue ) {
 				replyQueue = queue;

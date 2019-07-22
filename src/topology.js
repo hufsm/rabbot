@@ -61,9 +61,6 @@ function toArray( x, list ) {
 }
 
 var Topology = function( connection, options, serializers, unhandledStrategies, returnedStrategies ) {
-  const autoReplyTo = { name: `${replyId}.response.queue`, autoDelete: true, subscribe: true };
-  const rabbitReplyTo = { name: "amq.rabbitmq.reply-to", subscribe: true, noAck: true };
-  const userReplyTo = isObject( options.replyQueue ) ? options.replyQueue : { name: options.replyQueue, autoDelete: true, subscribe: true, exclusive: true };
   this.name = options.name;
   this.connection = connection;
   this.channels = {};
@@ -74,33 +71,24 @@ var Topology = function( connection, options, serializers, unhandledStrategies, 
     queues: {}
   };
   this.options = options;
-  this.replyQueue = { name: false };
   this.serializers = serializers;
   this.onUnhandled = ( message ) => unhandledStrategies.onUnhandled( message );
   this.onReturned = ( message ) => returnedStrategies.onReturned( message );
-  let replyQueueName = '';
 
-  if ( has( options, "replyQueue" ) ) {
-    replyQueueName = options.replyQueue.name || options.replyQueue;
-    if ( replyQueueName === false ) {
-      this.replyQueue = { name: false };
-    } else if ( replyQueueName ) {
-      this.replyQueue = userReplyTo;
-    } else if ( replyQueueName === "rabbitmq" ) {
-      this.replyQueue = rabbitReplyTo;
-    }
-  } else {
-    this.replyQueue = autoReplyTo;
+  this.replyQueue = { name: false };
+  if (options.replyQueue) {
+    this.replyQueue = { name: options.replyQueue.name, autoDelete: true, subscribe: true, exclusive: true };
+
+    // delay creation to allow for subscribers to attach a handler
+    process.nextTick( () => {
+      this.createReplyQueue().then( null, this.onReplyQueueFailed.bind( this ) );
+    } );
   }
 
   connection.on( "reconnected", this.onReconnect.bind( this ) );
   connection.on( "return", this.handleReturned.bind( this ) );
 
   this.createDefaultExchange().then( null, noop );
-  // delay creation to allow for subscribers to attach a handler
-  process.nextTick( () => {
-    this.createReplyQueue().then( null, this.onReplyQueueFailed.bind( this ) );
-  } );
 };
 
 Topology.prototype.completeRebuild = function() {
@@ -255,6 +243,7 @@ const newSuffixedQueue = (queue, suffix) => {
 }
 
 Topology.prototype.createReplyQueue = function() {
+  //if (!this.replyQueue) { return Promise.resolve(); }
   if ( this.replyQueue.name === undefined || this.replyQueue.name === false ) {
     return Promise.resolve();
   }

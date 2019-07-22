@@ -6,7 +6,14 @@ module.exports = {
 		host: "127.0.0.1",
 		port: 5672,
 		vhost: "%2f",
-		replyQueue: "customReplyQueue"
+    //replyQueue: "customReplyQueue"
+    replyQueue: {
+      name: "customReplyQueue",
+      //autoDelete: true,
+      //durable: false,
+      //exclusive: true,
+      //subscribe: true,
+    }
 	},
 
   noReplyQueue: {
@@ -15,7 +22,6 @@ module.exports = {
     pass: "guest",
     server: "127.0.0.1",
     port: 5672,
-    vhost: "%2f",
-    replyQueue: false
+    vhost: "%2f"
   }
 };

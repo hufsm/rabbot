@@ -4,7 +4,7 @@ require( "../setup" );
 const rabbit = require( "../../src/index.js" );
 const config = require( "./configuration" );
 
-describe( "No Reply Queue (replyQueue: false)", function () {
+describe( "No Reply Queue", function () {
   var messagesToSend;
   var harness;
 
