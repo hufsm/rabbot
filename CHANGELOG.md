@@ -1,6 +1,10 @@
 
 # @huf/rabbot - Changelog
 
+## 2.5.2 [2020-02-04]
+### Changed
+* PLDS-255 : update huf/rabbot dependencies - replace the `monologue.js` dependency with `node-monologue` which is actively maintained and fixes several security issues introduced through the `lodash` sub-dependency.
+
 ## 2.5.1 [2019-10-28]
 ### Changed
 * PLSA-51 : update huf/rabbot dependencies - update the machina dependency.
