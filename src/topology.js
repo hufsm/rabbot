@@ -1,7 +1,7 @@
 'use strict'
 
 var uuid = require( "uuid" );
-var Monologue = require( "monologue.js" );
+var Monologue = require( "node-monologue" );
 var log = require( "./log" )( "rabbot.topology" );
 var info = require( "./info" );
 var Exchange, Queue;
