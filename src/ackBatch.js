@@ -2,7 +2,7 @@
 
 const _ = require( "lodash" );
 const postal = require( "postal" );
-const Monologue = require( "monologue.js" );
+const Monologue = require( "node-monologue" );
 const signal = postal.channel( "rabbit.ack" );
 const log = require( "./log.js" )( "rabbot.acknack" );
 

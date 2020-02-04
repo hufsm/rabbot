@@ -1,6 +1,6 @@
 var _ = require( "lodash" );
 var machina = require( "machina" );
-var Monologue = require( "monologue.js" );
+var Monologue = require( "node-monologue" );
 var publishLog = require( "./publishLog" );
 var exLog = require( "./log.js" )( "rabbot.exchange" );
 var format = require( "util" ).format;

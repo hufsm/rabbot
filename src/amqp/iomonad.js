@@ -1,7 +1,7 @@
 // This is probably not a true monad, but it seems close based on my current understanding.
 
 var _ = require( "lodash" );
-var Monologue = require( "monologue.js" );
+var Monologue = require( "node-monologue" );
 var machina = require( "machina" );
 var log = require( "../log.js" )( "rabbot.io" );
 var format = require( "util" ).format;

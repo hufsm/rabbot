@@ -3,7 +3,7 @@
 var _ = require( "lodash" );
 var machina = require( "machina" );
 var format = require( "util" ).format;
-var Monologue = require( "monologue.js" );
+var Monologue = require( "node-monologue" );
 Monologue.mixInto( machina.Fsm );
 var log = require( "./log.js" )( "rabbot.queue" );
 
